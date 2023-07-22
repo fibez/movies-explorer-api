@@ -8,13 +8,22 @@ const ConflictError = require('../utils/errors/Conflict');
 const NotFoundError = require('../utils/errors/NotFound');
 const UnauthorizedError = require('../utils/errors/Unauthorized');
 
+const {
+  USER_NOT_FOUND_MESSAGE,
+  USER_CONFLICT_MESSAGE,
+  INVALID_DATA_MESSAGE,
+  INVALID_AUTH_DATA_MESSAGE,
+  SUCCESS_LOGOUT_MESSAGE,
+  SUCCESS_LOGIN_MESSAGE,
+} = require('../utils/errors/errorsMessages');
+
 async function getCurrentUser(req, res, next) {
   try {
     const userId = req.user._id;
 
     const foundUser = await user.findById(userId).select('email name');
     if (!foundUser) {
-      throw new NotFoundError('Пользователь не найден');
+      throw new NotFoundError(USER_NOT_FOUND_MESSAGE);
     }
 
     return res.json(foundUser);
@@ -31,7 +40,7 @@ async function updateUserInfo(req, res, next) {
     const foundUser = await user.findById(userId);
 
     if (!foundUser) {
-      throw new NotFoundError('Пользователь не найден');
+      throw new NotFoundError(USER_NOT_FOUND_MESSAGE);
     }
 
     if (email) {
@@ -71,10 +80,10 @@ async function createUser(req, res, next) {
     return res.status(201).json(responseData);
   } catch (error) {
     if (error.code === 11000) {
-      return next(new ConflictError('Пользователь с такими данными уже существует'));
+      return next(new ConflictError(USER_CONFLICT_MESSAGE));
     }
     if (error.name === 'ValidationError') {
-      return next(new BadRequestError('Переданы некорректные данные'));
+      return next(new BadRequestError(INVALID_DATA_MESSAGE));
     }
     return next(error);
   }
@@ -87,30 +96,30 @@ async function login(req, res, next) {
     const foundUser = await user.findOne({ email }).select('+password');
 
     if (!foundUser) {
-      throw new UnauthorizedError('Неправильная почта или пароль');
+      throw new UnauthorizedError(INVALID_AUTH_DATA_MESSAGE);
     }
 
     const passwordMatch = await bcrypt.compare(password, foundUser.password);
 
     if (!passwordMatch) {
-      throw new UnauthorizedError('Неправильная почта или пароль');
+      throw new UnauthorizedError(INVALID_AUTH_DATA_MESSAGE);
     }
 
     const token = jwt.sign({ _id: foundUser._id }, JWT, { expiresIn: '7d' });
 
     res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000 * 24 * 7 });
 
-    return res.status(200).json({ message: 'Вы успешно авторизованы' });
+    return res.status(200).json({ message: SUCCESS_LOGIN_MESSAGE });
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return next(new BadRequestError('Некорректные данные при авторизации'));
+      return next(new BadRequestError(INVALID_DATA_MESSAGE));
     }
     return next(error);
   }
 }
 
-async function logout(req, res, next) {
-  res.clearCookie('jwt').send({ message: 'Вы успешно вышли из системы' });
+async function logout(req, res) {
+  res.clearCookie('jwt').send({ message: SUCCESS_LOGOUT_MESSAGE });
 }
 
 module.exports = {

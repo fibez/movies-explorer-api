@@ -4,6 +4,12 @@ const BadRequestError = require('../utils/errors/BadRequest');
 const NotFoundError = require('../utils/errors/NotFound');
 const ForbiddenError = require('../utils/errors/Forbidden');
 
+const {
+  ACCESS_DENIED_MESSAGE,
+  MOVIE_NOT_FOUND_MESSAGE,
+  INVALID_DATA_MESSAGE,
+} = require('../utils/errors/errorsMessages');
+
 async function getCurrentUserFilms(req, res, next) {
   const userId = req.user._id;
 
@@ -27,8 +33,8 @@ async function addFilm(req, res, next) {
       trailerLink,
       thumbnail,
       movieId,
-      nameRu,
-      nameEn,
+      nameRU,
+      nameEN,
     } = req.body;
 
     const newMovie = await movie.create({
@@ -42,14 +48,14 @@ async function addFilm(req, res, next) {
       thumbnail,
       owner: userId,
       movieId,
-      nameRu,
-      nameEn,
+      nameRU,
+      nameEN,
     });
 
     return res.status(201).json(newMovie);
   } catch (error) {
     if (error.name === 'ValidationError') {
-      return next(new BadRequestError('Переданы некорректные данные'));
+      return next(new BadRequestError(INVALID_DATA_MESSAGE));
     }
     return next(error);
   }
@@ -63,11 +69,11 @@ async function deleteMovie(req, res, next) {
     const deletedMovie = await movie.findOne({ movieId: deletedMovieId });
 
     if (!deletedMovie) {
-      throw new NotFoundError('Фильм не найден');
+      throw new NotFoundError(MOVIE_NOT_FOUND_MESSAGE);
     }
 
     if (deletedMovie.owner.toString() !== userId) {
-      throw new ForbiddenError('У вас нет прав для удаления этого фильма');
+      throw new ForbiddenError(ACCESS_DENIED_MESSAGE);
     }
 
     await movie.deleteOne({ movieId: deletedMovieId });

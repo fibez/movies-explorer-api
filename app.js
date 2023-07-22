@@ -20,11 +20,13 @@ const {
   requestLogger,
   errorLogger,
 } = require('./middlewares/loggers');
+const limiter = require('./middlewares/rateLimeter');
 
 mongoose.connect(DB, {
   useNewUrlParser: true,
 });
 
+app.use(limiter);
 app.use(requestLogger);
 
 app.use(cookieParser());

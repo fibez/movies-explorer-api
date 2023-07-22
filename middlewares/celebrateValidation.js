@@ -24,8 +24,8 @@ const movieSchemaValidator = celebrate({
     trailerLink: Joi.string().regex(urlRegex),
     thumbnail: Joi.string().regex(urlRegex),
     movieId: Joi.number().required(),
-    nameRu: Joi.string().regex(ruRegex),
-    nameEn: Joi.string().regex(engRegex),
+    nameRU: Joi.string().regex(ruRegex),
+    nameEN: Joi.string().regex(engRegex),
   }),
 });
 
