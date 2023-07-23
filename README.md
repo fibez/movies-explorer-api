@@ -8,6 +8,6 @@ API позволяет: регестрировать и авторизирова
 
 ## Ссылка на проект
 
-IP 84.201.154.172
+IP 130.193.55.216
 
 Backend https://api.aeliseevdiploma.nomoredomains.xyz
