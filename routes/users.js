@@ -1,15 +1,12 @@
-const usersRouter = require('express').Router();
+const usersRouter = require("express").Router();
 
+const { getCurrentUser, updateUserInfo } = require("../controllers/users");
 const {
-  getCurrentUser,
-  updateUserInfo,
-} = require('../controllers/users');
-const {
-  userSchemaValidator,
-} = require('../middlewares/celebrateValidation');
-const { auth } = require('../middlewares/auth');
+  userUpdateSchemaValidator,
+} = require("../middlewares/celebrateValidation");
+const { auth } = require("../middlewares/auth");
 
-usersRouter.get('/users/me', auth, getCurrentUser);
-usersRouter.patch('/users/me', auth, userSchemaValidator, updateUserInfo);
+usersRouter.get("/me", auth, getCurrentUser);
+usersRouter.patch("/me", auth, userUpdateSchemaValidator, updateUserInfo);
 
 module.exports = usersRouter;
