@@ -1,5 +1,5 @@
 const { celebrate, Joi } = require("celebrate");
-const { ruRegex, engRegex, urlRegex } = require("../utils/regex");
+const { urlRegex } = require("../utils/regex");
 
 const userSchemaValidator = celebrate({
   body: Joi.object().keys({
@@ -27,8 +27,8 @@ const movieSchemaValidator = celebrate({
     trailerLink: Joi.string().regex(urlRegex),
     thumbnail: Joi.string().regex(urlRegex),
     movieId: Joi.number().required(),
-    nameRU: Joi.string().regex(ruRegex),
-    nameEN: Joi.string().regex(engRegex),
+    nameRU: Joi.string(),
+    nameEN: Joi.string(),
   }),
 });
 

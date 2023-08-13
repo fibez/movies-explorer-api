@@ -6,7 +6,11 @@ const corsSettings = {
     "http:aeliseevdiploma.nomoredomains.xyz",
   ],
   methods: ["GET", "POST", "DELETE", "PATCH"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Access-Control-Allow-Origin",
+  ],
   credentials: true,
 };
 
