@@ -66,7 +66,10 @@ async function deleteMovie(req, res, next) {
   const deletedMovieId = req.params.id;
 
   try {
-    const deletedMovie = await movie.findOne({ movieId: deletedMovieId });
+    const deletedMovie = await movie.findOne({
+      movieId: deletedMovieId,
+      owner: userId
+  });
 
     if (!deletedMovie) {
       throw new NotFoundError(MOVIE_NOT_FOUND_MESSAGE);
